@@ -1,0 +1,11 @@
+[project]
+name = "seasonal-clock"
+version = "1.0.0"
+description = "Dual-oscillator models for Drosophila seasonal phase encoding"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "matplotlib>=3.10.9",
+    "numpy>=2.4.4",
+    "scipy>=1.17.1",
+]

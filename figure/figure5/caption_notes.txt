@@ -1,0 +1,37 @@
+Figure 5 candidate model panels (reduced model)
+
+The compact four-parameter main-text preset is used throughout, without refitting.
+M is orange (#ED8630); E is blue (#2024F6).
+
+seasonal_profiles: Normalized phase-derived transcription proxies for PDF loss
+at 12L:12D and WT at 12L:12D, 10L:14D and 16L:8D. Gray indicates darkness.
+The proxy is max(0, -cos(phi))^4, normalized separately to unit peak. These
+waveforms illustrate timing; amplitudes and waveform shapes are not fitted
+RNA measurements. Dashed orange exposes the coincident M/E PDF-loss curves.
+
+peak_times and phase_gap: Lines show stationary WT model predictions; points
+and error bars show stored experimental peak estimates and SDs. Phase-gap SDs
+are the stored paired gap SDs, not an independent combination of phase SDs.
+The paired WT phase RMSE across 11 photoperiods is 0.229 h. Empirical
+photoperiod landmarks and fixed reference constants remain data-informed.
+
+genotypes: Open circles show experimental calibration targets; filled squares
+show model predictions at 12L:12D. Horizontal offsets expose overlapping
+symbols without changing peak times. No measured genotype uncertainty is
+supplied, so no genotype error bars are shown.
+
+model_summary_2x2: Combined schematic, phase gap, peak times and genotype
+comparison. The schematic represents shared light attraction, symmetric
+synchronization and an effective PDF-dependent separating drive. Its arrows
+are effective phase influences, not a claim about anatomical connectivity.
+This composite preserves the legacy +/-0.07 h display-only vertical offset
+for coincident PDF-loss M/E symbols; mention that offset if using the composite.
+Standalone genotypes uses horizontal separation and needs no vertical-offset note.
+
+PDF and SVG are vector exports for manuscript assembly; PNGs are 400 dpi.
+The composite is 4.0 x 3.6 inches. Model peak tables, normalized profiles and
+source hashes are included as CSV/JSON. Existing baseline model assets are preserved.
+The source workbook Figure4_extracted.xlsx is absent in this workspace;
+raw expression panels have therefore not been regenerated.
+
+Reproduce: uv run python code/build_figure5.py

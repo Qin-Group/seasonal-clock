@@ -1,0 +1,16 @@
+{
+  "model": "1.0.0",
+  "preset": "original compact main-text preset",
+  "parameters": {
+    "K": 0.07293379243972402,
+    "lam": 3.0089764240871326,
+    "gamma": 0.10824960173209562,
+    "kappa": 0.006216294327871823
+  },
+  "paired_WT_RMSE_h": 0.2289269757508832,
+  "sources": {
+    "code/phase_model.py": "a7ecefc8299b96879d47163f46b005b16852b2cfa1fa88fb5fdbca7077d3629f",
+    "code/build_figure5.py": "84686c8623273b0cfada173fd4c23f9deb5da691c20df772555445e85baf7038",
+    "code/manuscript_fig_2x2.py": "fddf0c4f6aed407ab198a1fbd08c604497d2ed7812c1cf82bd2c8f5e8e5193ca"
+  }
+}

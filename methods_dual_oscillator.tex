@@ -1,0 +1,81 @@
+% =========================================================================
+% "Minimal dual-oscillator phase model" Methods subsection (reduced model model).
+% Written to be pasted into the manuscript's Materials and Methods; adapt
+% equation numbering and citation keys to house style. Parameter tables,
+% the full fitting objective, numerical checks and the sensitivity analysis
+% are in supplementary_model.tex.
+% Source code: code/phase_model.py.
+% =========================================================================
+\section*{Methods: minimal dual-oscillator phase model}
+
+We modeled the morning (M) and evening (E) clock-neuron transcriptional
+rhythms as two coupled phase oscillators, $\phi_M(t)$ and $\phi_E(t)$,
+with a \textit{tim} transcriptional peak defined at $\phi = \pi$. Time
+$t$ is in hours, with zeitgeber time (ZT) 0 at lights-on. The phases
+evolved as
+\begin{equation}
+\begin{aligned}
+\dot\phi_M &= \omega + K\,L(t)\sin\bigl(\theta(t)-\phi_M\bigr)
+              + \kappa\sin(\phi_E-\phi_M) + g_M\,\gamma\,S(t), \\
+\dot\phi_E &= \omega + K\,L(t)\sin\bigl(\theta(t)-\phi_E\bigr)
+              - \kappa\sin(\phi_E-\phi_M) - g_E\,\gamma\,S(t).
+\end{aligned}
+\end{equation}
+The four terms are, in order, the intrinsic rhythm
+($\omega = 2\pi/24\ \mathrm{h}^{-1}$), entrainment by light, mutual
+coupling, and a PDF-dependent drive. The two oscillators differ only in
+the sign of the PDF-dependent term, so that without PDF signaling their
+phases are identical and their peaks coincide.
+
+Light was a square wave, $L(t) = 1$ for $(t \bmod 24) < P$ and $0$
+otherwise, with $P$ the photoperiod in hours. In the light, each
+oscillator is attracted with strength $K$ toward a reference phase
+$\theta(t)$ that reaches the peak phase $\pi$ at ZT $B(P)$:
+\begin{equation}
+\begin{aligned}
+\theta(t) &= \omega t + \pi - \omega\,B(P), \qquad
+B(P) = \max(8,\,P_c+1) + (\lambda-1)\,F(P), \\
+P_c &= \min(P,\,15), \qquad x = \max(0,\,P_c-9), \qquad
+F(P) = \frac{x^2}{x^2+1}.
+\end{aligned}
+\end{equation}
+The reference peak is therefore at ZT~8 on days of 7~h or shorter and
+1~h after lights-off at 7--9~h; on longer days its delay after lights-off
+grows toward $\lambda$ hours as the activation function $F(P)$ rises from
+0 toward 1, and it no longer changes beyond 15~h of light. These
+landmarks were fixed from the measured peak times.
+
+The effective phase-separating action of PDF was
+\begin{equation}
+S(t) = L(t)\,\max\bigl(0,\cos\theta(t)\bigr)\,F(P),
+\end{equation}
+which is present only in the light, during the subjective morning of the
+reference cycle, and at photoperiods longer than 9~h. It advances M and
+delays E with equal strength $\gamma$, consistent with the opposite phase
+shifts produced by cell-specific loss of the PDF receptor (PDFR). The
+flags $(g_M, g_E)$ switch the drive on or off in each cell group: $(1,1)$
+for wild type, $(0,0)$ for loss of PDF, $(0,1)$ for M-specific and
+$(1,0)$ for E-specific loss of PDFR. The coupling $\kappa$ pulls the two
+phases together in every genotype; in constant darkness (DD), where
+$L = S = 0$, it is the only term acting on the M--E gap, which then
+decays with a time constant of $1/(2\kappa)$.
+
+The equations were integrated numerically
+(\texttt{scipy.integrate.odeint}), with lights-on and lights-off supplied
+as integration breakpoints, and peak times were taken as the times at
+which each phase crossed $\pi$ once the rhythm had settled (60 simulated
+days). Four parameters ($K$, $\lambda$, $\gamma$, $\kappa$) were
+estimated by bounded nonlinear least squares
+(\texttt{scipy.optimize.least\_squares}). The targets were the bootstrap
+mean M and E peak times at 11 wild-type photoperiods (10,000 paired,
+stratified resamples of the 20 brains at each ZT), weighted by their
+bootstrap covariance; the M and E peak times of the three mutant
+genotypes at 12L:12D; and the M--E gap on days 1 and 4 after transfer
+from 12L:12D to DD. The resulting fit ($K=0.073$, $\gamma=0.108$ and
+$\kappa=0.0062~\mathrm{rad\,h^{-1}}$; $\lambda=3.01$~h) reproduced the
+wild-type peak times with a root-mean-square error of 0.23~h and the
+mutant peak times to within 0.35~h. The complete fitting objective,
+parameter and target tables, numerical checks and sensitivity analysis
+are given in the Supplementary Information. Model code, fitted
+parameters, and the experimental targets used for fitting are available
+at [repository URL / data availability statement].
