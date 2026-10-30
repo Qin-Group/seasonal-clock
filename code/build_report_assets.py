@@ -1,9 +1,8 @@
-"""Build vector figures and LaTeX rows for the reduced model note from saved results."""
+"""Build vector comparison figures and a checksum manifest from saved results."""
 from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
-import zipfile
 
 import matplotlib
 matplotlib.use("Agg")
@@ -19,19 +18,10 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT/"figure/report"
 DATA = ROOT/"out/model_comparison/results.json"
 COLORS = ("#ED8630", "#2024F6")
-NAMES = {"zero_offset": r"$\chi=0$", "symmetric": r"Equal PDF strengths",
-         "linear_window": r"Linear release (7 free)",
-         "anchored_reference": r"Fixed short-day anchors",
-         "fixed_activation": r"Fixed activation scale (4 free)",
-         "no_coupling": r"No synchronization"}
 
 
 def read(path):
     return json.loads(path.read_text())
-
-
-def rows(name, data):
-    (OUT/f"{name}.tex").write_text(" \\\\\n".join(data)+"\n")
 
 
 def save(fig, name):
@@ -153,70 +143,16 @@ def main():
                loc="outside upper center", ncol=4, frameon=False, fontsize=7)
     save(fig, "raw_waveforms")
 
-    comparisons = [("Reference model", ref)]+[(NAMES[n], fits[n]) for n in NAMES]
-    rows("comparison_rows", [
-        f"{label} & {len(x['free_parameters'])} & {x['WT_peak_rmse_h']:.3f} & "
-        f"{x['WT_gap_sse_h2']:.3f} & {sum(x['objective_parts'].values()):.3f} & "+
-        (f"{x['cross_validation']['rmse_h']:.3f}" if "cross_validation" in x else "---")
-        for label, x in comparisons])
-    param_names = [
-        ("K", r"$K$", "rad/h", "Shared light attraction"),
-        ("lam", r"$\lambda$", "h", "Long-day reference lag"),
-        ("gamma", r"$\gamma$", "rad/h", "Common PDF strength"),
-        ("kappa", r"$\kappa$", "rad/h", "Synchronizing coupling"),
-        ("h_P", r"$h_P$", "h", "Activation half-scale"),
-        ("P_floor", r"$P_f$", "h", "Short-day floor"),
-        ("lam_short", r"$\lambda_s$", "h", "Short-day lag")]
-    def value(x, name):
-        return x["parameters"]["alpha" if name == "gamma" else name]
-    rows("parameter_rows", [
-        f"{label} & {value(seven,n):.6f} & "
-        f"{value(r['raw_refits']['linear_window'],n):.6f} & "
-        f"{value(r['raw_refits']['fixed_activation'],n):.6f} & {unit} & {meaning}"
-        for n, label, unit, meaning in param_names])
-    rows("genotype_rows", [
-        f"{label} & {GENOTYPES[g][0]:.1f} & {GENOTYPES[g][1]:.1f} & "
-        f"{four['genotypes'][g]['peaks'][0]:.3f} & {four['genotypes'][g]['peaks'][1]:.3f}"
-        for g, label in (("pdf0", r"\pdfzero{}"), ("pdfrM", "M-specific PDFR loss"),
-                         ("pdfrE", "E-specific PDFR loss"))])
-    rows("dd_rows", [
-        f"{d+1} & {ref['DD_transfer'][d]['gap']:.3f} & "
-        f"{four['DD_transfer'][d]['gap']:.3f} & {fits['no_coupling']['DD_transfer'][d]['gap']:.3f}"
-        for d in range(4)])
-    rows("raw_rows", [
-        f"{label} & {n} & {preset:.3f} & {joint:.3f}"
-        for label, n, preset, joint in [
-            ("reference", 10, raw["cases"]["reference_phase_fit"]["raw_weighted_SSE"],
-             raw["cases"]["reference_raw_joint_fit"]["raw_weighted_SSE"]),
-            ("reduced model (seven free)", 7, seven["raw_profile_score"]["raw_weighted_SSE"],
-             r["raw_refits"]["linear_window"]["raw_weighted_SSE"]),
-            ("reduced model (four free)", 4, four["raw_profile_score"]["raw_weighted_SSE"],
-             r["raw_refits"]["fixed_activation"]["raw_weighted_SSE"])]])
     inputs = [DATA, ROOT/"out/reference/raw_joint/results.json", ROOT/"out/reference/observation.json",
               ROOT/"experimental_phase_vs_daylength.csv",
               ROOT/"out/model_comparison/core_validation.json",
-              ROOT/"code/build_report_assets.py", ROOT/"code/phase_model.py",
-              ROOT/"dual_oscillator_model_note.tex"]
-    outputs = sorted(p for p in OUT.iterdir() if p.suffix in (".pdf", ".tex"))
+              ROOT/"code/build_report_assets.py", ROOT/"code/phase_model.py"]
+    outputs = sorted(p for p in OUT.iterdir() if p.suffix == ".pdf")
     manifest = {"report_version": "1.0.0", "fitting_performed": False,
                 "sha256": {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
                            for p in inputs+outputs}}
     (OUT/"manifest.json").write_text(json.dumps(manifest, indent=2)+"\n")
-    source = ROOT/"dual_oscillator_model_note.tex"
-    if source.exists():
-        bundle = ROOT/"output/pdf/dual_oscillator_model_note_source.zip"
-        bundle.parent.mkdir(parents=True, exist_ok=True)
-        with zipfile.ZipFile(bundle, "w", zipfile.ZIP_DEFLATED) as z:
-            for p in [source, *outputs, OUT/"manifest.json"]:
-                z.write(p, p.relative_to(ROOT))
-            z.writestr("README.txt", "Model reduced model report source bundle.\n"
-                       "Compile from this directory:\n"
-                       "latexmk -pdf -interaction=nonstopmode -halt-on-error "
-                       "dual_oscillator_model_note.tex\n"
-                       "All figure and table inputs are included; no Python or raw "
-                       "workbooks are required for compilation.\n"
-                       "The scientific results are exploratory; see the report limitations.\n")
-    print(f"Built {len(outputs)} vector/table assets in {OUT}")
+    print(f"Built {len(outputs)} vector figures in {OUT}")
 
 
 if __name__ == "__main__":

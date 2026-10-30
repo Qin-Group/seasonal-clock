@@ -1,6 +1,6 @@
 # Seasonal clock model
 
-Code and data accompanying the seasonal dual-oscillator manuscript.
+Code, data, and figures accompanying the seasonal dual-oscillator manuscript. Manuscript LaTeX sources are not included.
 
 ## Setup
 
@@ -20,23 +20,13 @@ uv run python code/build_report_assets.py
 - `code/dual_oscillator_minimal.py` and `code/dual_oscillator_pdf.py`: oscillator helpers and experimental target tables.
 - `code/build_figure5.py`: Figure 5 panels, plotted values, and source-data workbook.
 - `code/build_supplementary_figures.py`: supplementary figures, using saved comparison results and identifiability images.
-- `code/build_report_assets.py`: comparison figures and LaTeX table rows.
+- `code/build_report_assets.py`: comparison figures and a file-checksum manifest.
 - `experimental_phase_vs_daylength.csv`: experimental peak-time data.
 - `out/reference/`: observed waveforms and saved reference fits.
 - `out/model_comparison/`: saved model comparison and validation results.
 - `out/identifiability/`: saved identifiability images.
 - `figure/`: manuscript figures and source data.
-- `*.tex`: manuscript, methods, supplement, and technical-note sources.
 
 Figure reproduction uses saved fitted parameters and results. The complete optimization and identifiability workflows are not included in this manuscript code distribution; identifiability panels are reproduced from the supplied images.
 
-## Compile manuscript sources
-
-With a LaTeX installation providing latexmk:
-
-```sh
-latexmk -pdf -interaction=nonstopmode -halt-on-error -output-directory=output/pdf manuscript_model.tex
-latexmk -pdf -interaction=nonstopmode -halt-on-error -output-directory=output/pdf supplementary_model.tex
-```
-
-Run the figure commands first. All paths are relative to this repository, so the folder can be uploaded directly to a new repository.
+All commands and paths are relative to the repository root.
